@@ -196,57 +196,45 @@ const TodoMvcApp = () => {
 </details>
 
 <details>
-<summary><b>Configuration, common state managed by GET & POST, request retries</b></summary>
+<summary><b>Common state GET & POST</b></summary>
+  
+[![Edit Common state GET & POST](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/common-state-get-post-z93n5?fontsize=14)
 
 ```js
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import { provideAxiosInstance, useGetData, usePostCallback } from 'use-axios-react';
+import React, { useEffect } from "react";
+import { useGetData, usePostCallback } from "use-axios-react";
 
-// Set axios instance with baseURL
-provideAxiosInstance(axios.create({
-  baseURL: 'http://slim3-todo-backend.appelsiini.net',
-}));
-
-const TodoApp = () => {
+const CreateUser = () => {
   
-  // Fetch existing todos
-  const [todos = [], fetching, fetchError, { setState: setTodos }] = useGetData('/todos', {
-    // This means run only on mount, the same principle as with the useState() second argument
-    depends: []
-  });
-  
-  // Get the `create` callback to POST new todos
-  const [create, creating, createError, { retry, data: createdTodo }] = usePostCallback((title) => ({
-    url: '/todos', data: { title }
-  }));
+  // Do an initial load
+  const [users = [], loading, loadError, { setData: setUsers }] = useGetData(
+    "https://reqres.in/api/users"
+  );
 
-  if (creating || fetching) {
-    return (<div>Loading...</div>);
-  }
+  // We're particularly interested in the create() callback and the response data (new user data)
+  const [create, creating, createError, { data: newUser }] = usePostCallback(
+    "https://reqres.in/api/users"
+  );
 
-  // Show the retry on create error
-  if (createError) {
-    return (<div>Error occurred <button onClick={retry}>RETRY</button></div>);
-  }
-
-  // Update the todos if one has been successfully created
-  const hasCreated = createdTodo && !creating && !createError;
+  // Update users state evey time the newUser changes
   useEffect(
-    () => { hasCreated && setTodos([...todos, createdTodo]); },
-    [hasCreated]
+    () => {
+      newUser && setUsers([...users, newUser]);
+    },
+    [newUser]
   );
 
   return (
     <Layout>
-      <Header>
-        <NewTodo create={create} />
-      </Header>
-      <TodoList todos={todos} remove={remove} update={update} />
+      <Button onClick={() => create({})}>Create dummy user</Button>
+
+      <span>{(loading || creating) && "Loading..."}</span>
+      <span>{(loadError || createError) && "Error occurred"}</span>
+
+      <UserList users={users} />
     </Layout>
   );
 };
-
 ```
 </details>
 
