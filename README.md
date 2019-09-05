@@ -32,40 +32,73 @@ And make sure you use React v16.8.0 or newer.
 
 ## Examples 
 
-<b>Data fetching with request cancellation</b>
+<b>Basic data fetching (GET)</b>
+
+[![Edit Fetch example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/fetch-with-reload-retry-hlmb2?fontsize=14)
 
 ```js
 import React from 'react';
 import { useGetData } from 'use-axios-react';
 
-const Advice = () => {
-  const [data, loading] = useGetData('https://api.adviceslip.com/advice', { cancellable: true });
+const KanyeQuote = () => {
+  const [data, loading] = useGetData("https://api.kanye.rest/", { cancelable: true });
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
-  return <blockquote>{data.slip.advice}</blockquote>;
+  return <blockquote>{data.quote}</blockquote>;
+};
+```
+
+<b>Cancellable fetching (GET) with reload and retry</b>
+
+[![Edit Cancelable fetch with reload & retry](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/fetch-with-reload-retry-ghrd8?fontsize=14)
+
+```js
+import React from "react";
+import { useGetData } from "use-axios-react";
+
+const KanyeQuote = () => {
+  const [data, loading, error, { retry }] = useGetData("https://api.kanye.rest/", { cancelable: true });
+
+  if (loading) return <Spinner />;
+  if (error) return <Button onClick={retry} label="RETRY" />;
+
+  return (
+    <div>
+      <Quote>{data.quote}</Quote>
+      <Button onClick={retry} label="RELOAD" />
+    </Fragment>
+  );
 };
 ```
 
 <b>Basic POST example</b>
 
+[![Edit POST example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/post-example-8x59c?fontsize=14)
+
 ```js
-import React, { Fragment } from 'react';
-import { useGetData } from 'use-axios-react';
+import React from "react";
+import { usePostCallback } from "use-axios-react";
 
-const BasicExample = () => {
-  const [data, loading, error, { retry }] = useGetData('https://api.kanye.rest/', { cancelable: true });
+function userToRequest({ name, job }) {
+  return {
+    url: "https://reqres.in/api/users",
+    data: { name, job }
+  };
+}
 
-  if (loading) return <Spinner />;
-  if (error) return <div>Error occurred, try to <Button onClick={retry} label="RETRY" /></div>;
+const CreateUser = () => {
+  const [create, sending, error, { data }] = usePostCallback(userToRequest);
+
+  const neo = { name: "Neo", job: "The One" };
+  const morpheus = { name: "Morpheus", job: "Leader" };
 
   return (
-    <Fragment>
-      <Quote>{data.quote}</Quote>
-      <Button onClick={retry} label="RELOAD" />
-    </Fragment>
+    <Layout>
+      <Button onClick={() => create(neo)}>Neo</Button>
+      <Button onClick={() => create(morpheus)}>Morpheus</Button>
+      <StatusBar sending={sending} error={error} lastUser={data} />
+    </Layout>
   );
 };
 ```
