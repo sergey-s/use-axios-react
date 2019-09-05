@@ -1,0 +1,59 @@
+{
+  "name": "use-axios-react",
+  "version": "0.1.10",
+  "description": "Axios in React in the hooks era",
+  "source": "src/index.js",
+  "main": "lib/index.js",
+  "module": "lib/index.module.js",
+  "scripts": {
+    "build": "microbundle",
+    "eslint": "eslint . --ext .js --ignore-path .gitignore",
+    "eslint:fix": "eslint . --ext .js --ignore-path .gitignore --fix",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "author": "Sergey Sytsevich <laa513@gmail.com>",
+  "homepage": "https://github.com/sergey-s/use-axios-react",
+  "repository": "github:sergey-s/use-axios-react",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "axios": "^0.19.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "microbundle": "^0.11.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "keywords": [
+    "react",
+    "axios",
+    "http",
+    "api",
+    "useAxios",
+    "react hook",
+    "react hooks",
+    "react-hook",
+    "axios hook",
+    "axios hooks",
+    "axios-hook",
+    "use",
+    "use-axios",
+    "use-axios-react",
+    "fetch",
+    "hook",
+    "hooks",
+    "fetch",
+    "request"
+  ]
+}
