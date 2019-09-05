@@ -106,58 +106,66 @@ const CreateUser = () => {
 <details>
 <summary><b>Pagination</b></summary>
 
+[![Edit Pagination](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/react-pagination-with-axios-hooks-9j5dr?fontsize=14)
+
 ```js
-import React, { Fragment } from 'react';
-import { useGetData } from 'use-axios-react';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import { useGetData } from "use-axios-react";
 
-const PaginationExample = () => {
+const PaginatedKanyeQuotes = () => {
   const [page, setPage] = useState(1);
-  const goPrev = () => setPage(page - 1);
-  const goNext = () => setPage(page + 1);
-
   const [data, loading] = useGetData(
-    { url: 'https://api.kanye.rest/', params: { page } },
+    { url: "https://api.kanye.rest/", params: { page } },
     { cancelable: true }
   );
 
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />;
+
+  const prev = () => setPage(page - 1);
+  const next = () => setPage(page + 1);
 
   return (
-    <Fragment>
+    <div>
       <Quote>{data.quote}</Quote>
       <div>
-        <Button onClick={goPrev} disabled={page <= 1} label="&larr; Prev" />
+        <Button onClick={prev} disabled={page <= 1} label="← Prev" />
         <span className="mx-5">Page {page}</span>
-        <Button onClick={goNext} label="Next &rarr;" />
+        <Button onClick={next} disabled={page >= 9} label="Next →" />
       </div>
-    </Fragment>
+    </div>
   );
 };
 ```
 </details>
 
 <details>
-<summary><b>Basic CRUD</b></summary>
+<summary><b>Basic TodoMVC CRUD</b></summary>
+
+[![Edit TodoMVC CRUD](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/todomvc-crud-y77vf?fontsize=14)
 
 ```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
-import { Layout, Header, NewTodo, TodoList } from './components';
+import React from "react";
+import axios from "axios";
 import {
-  provideAxiosInstance, useGetData, usePostCallback, useDeleteCallback, usePatchCallback } from 'use-axios-react';
+  provideAxiosInstance,
+  useGetData,
+  usePostCallback,
+  useDeleteCallback,
+  usePatchCallback
+} from "use-axios-react";
 
-provideAxiosInstance(axios.create({
-  baseURL: 'http://slim3-todo-backend.appelsiini.net',
-}));
+provideAxiosInstance(
+  axios.create({
+    baseURL: "https://todo-backend-node-koa.herokuapp.com"
+  })
+);
 
 /**
  * Map todos to axios request configs
  */
-const todoObjectToAxiosRequest = ({ uid, title, order, completed }) => ({
-  url: uid ? `/todos/${uid}` : '/todos',
+const todoObjectToAxiosRequest = ({ id, title, order, completed }) => ({
+  url: id ? `/todos/${id}` : "/todos",
   data: { title, order, completed }
 });
 
@@ -166,9 +174,9 @@ const TodoMvcApp = () => {
   const [remove, removing, removeError] = useDeleteCallback(todoObjectToAxiosRequest);
   const [update, updating, updateError] = usePatchCallback(todoObjectToAxiosRequest);
 
-  const [todos = [], fetching, fetchError] = useGetData('/todos', {
+  const [todos = [], fetching, fetchError] = useGetData("/todos", {
     depends: [creating, removing, updating],
-    willRun: !creating && !removing && !updating,
+    willRun: !creating && !removing && !updating
   });
 
   if (createError || removeError || updateError || fetchError) {
@@ -184,8 +192,6 @@ const TodoMvcApp = () => {
     </Layout>
   );
 };
-
-ReactDOM.render(<TodoMvcApp />, document.getElementById('root'));
 ```
 </details>
 
@@ -246,8 +252,6 @@ const TodoApp = () => {
 
 ### Example apps
 
-- [Basic data fetching](https://github.com/sergey-s/data-fetching-use-axios-react-example)
-- [Basic CRUD with reload](https://github.com/sergey-s/crud-use-axios-react-example)
 - [Full featured TodoMVC app](https://github.com/sergey-s/todo-mvc-react-hooks-real-api)
 
 * *Submit a PR with your example!*
