@@ -41,7 +41,7 @@ import React from 'react';
 import { useGetData } from 'use-axios-react';
 
 const KanyeQuote = () => {
-  const [data, loading] = useGetData("https://api.kanye.rest/", { cancelable: true });
+  const [data, loading] = useGetData("https://api.kanye.rest/");
 
   if (loading) return <div>Loading...</div>;
 
