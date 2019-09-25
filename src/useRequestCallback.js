@@ -11,48 +11,52 @@ function applyArgToAxiosConfig(arg, config) {
 }
 
 function useRequestCallback(axiosConfigOrFactory, axiosConfigOverrides = {}) {
-  const [execCount, setExecCount] = useState(0);
-  const [execInput, setExecArg] = useState(null);
+  const [state, setState] = useState({
+    execCount: 0,
+    execInput: null,
+    loading: false,
+    error: null,
+    response: null,
+    data: null,
+  });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null);
-  const [data, setData] = useState(null);
-
-  const exec = (arg) => {
-    setError(false);
-    setLoading(true);
-    setExecArg(arg);
-    setExecCount(execCount + 1);
-  };
+  const exec = (arg) => setState({
+    ...state,
+    loading: true,
+    error: null,
+    execInput: arg,
+    execCount: state.execCount + 1,
+  });
 
   useEffect(
     () => {
-      if (!execCount) {
+      if (!state.execCount) {
         return;
       }
 
       async function doRequest() {
-        const requestConfig = { ...applyArgToAxiosConfig(execInput, axiosConfigOrFactory), ...axiosConfigOverrides };
+        const requestConfig = {
+          ...applyArgToAxiosConfig(state.execInput, axiosConfigOrFactory),
+          ...axiosConfigOverrides
+        };
+
         try {
           const response = await axiosInstance(requestConfig);
-          setResponse(response);
-          setData(response.data);
-        } catch (e) {
-          setError(e);
-        } finally {
-          setLoading(false);
+          setState({ ...state, loading: false, response, data: response.data });
+        } catch (error) {
+          setState({ ...state, loading: false, error });
         }
       }
 
       doRequest();
     },
-    [execCount]
+    [state.execCount]
   );
 
-  const retry = () => exec(execInput);
+  const retry = () => exec(state.execInput);
+  const { loading, error, response, data, execCount, execInput } = state;
 
-  return [exec, loading, error, { retry, response, data, execCount, input: execInput }];
+  return [exec, loading, { error, retry, response, data, execCount, input: execInput }];
 }
 
 const useGetCallback    = (axiosConfigOrFactory) => useRequestCallback(axiosConfigOrFactory, { method: 'GET' });

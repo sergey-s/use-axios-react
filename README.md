@@ -8,13 +8,13 @@
 
 ## Features
 
-- Hooks for ✅ data fetching and ✅ CRUD
+- Hooks for ✅ data fetching ✅ CRUD ✅ Batch operations
 - ✅ Request cancellation
 - ✅ Retry/reload callbacks
 - ✅ Zero-configuration, yet fully configurable when needed
 - ✅ No app architecture commitments, drop in into your React and Axios project and start using hooks in your new components
-- No extra-dependencies (React and Axios are peer depencies), thus minimum overhead if your project already uses Axios
-- All Axios features
+- No extra-dependencies (React and Axios are peer dependencies), thus minimum overhead if your project already uses axios
+- All axios features
 
 ## Installation
 
@@ -246,11 +246,7 @@ const TodoApp = () => {
 
 ### Example apps
 
-- [Basic data fetching](https://github.com/sergey-s/data-fetching-use-axios-react-example)
-- [Basic CRUD with reload](https://github.com/sergey-s/crud-use-axios-react-example)
-- [Full featured TodoMVC app](https://github.com/sergey-s/todo-mvc-react-hooks-real-api)
-
-* *Submit a PR with your example!*
+- [Full featured TodoMVC app](https://github.com/sergey-s/todomvc-react-hooks-api-crud)
 
 ### API Overview
 
@@ -275,6 +271,19 @@ const TodoApp = () => {
     </td>
     <td>
         Use this if you need to <b>create callbacks to trigger a request</b> programmatically
+    </td>
+</tr>
+<tr>
+    <td>
+        <br/>
+        <code>useParallelPostCallback()</code><br/><br/>
+        <code>useParallelPutCallback()</code><br/><br/>
+        <code>useParallelPatchCallback()</code><br/><br/>
+        <code>useParallelDeleteCallback()</code><br/><br/>
+        <code>useParallelGetCallback()</code><br/><br/>
+    </td>
+    <td>
+        Use this if you need to <b>create callbacks to trigger batch requests</b>
     </td>
 </tr>
 </table>
@@ -318,26 +327,7 @@ const TodoApp = () => {
 </tr>
 </table>
 
-- result array structure is `[data, loading, error, otherData]`:
-
-<table>
-<tr>
-    <td><code>data:&nbsp;any</code></td>
-    <td>Response data</td>
-</tr>
-<tr>
-    <td><code>loading:&nbsp;bool</code></td>
-    <td>Loading indicator</td>
-</tr>
-<tr>
-    <td><code>error:&nbsp;Error|null</code></td>
-    <td>Error, if any</td>
-</tr>
-<tr>
-    <td><code>otherData:&nbsp;Object</code></td>
-    <td><code>{ response, retry, retriesCount, setData }</code></td>
-</tr>
-</table>
+- result array structure is `[data, loading, { error, response, retry, retriesCount, setData }]`:
 
 -------------------
 
@@ -347,42 +337,23 @@ Where {Method} is one of the following: `Post, Put, Patch, Delete, Get`
 
 * `url|axiosConfig|factory` &mdash; Request URL, axios config object or factory, producing an axios config object from 
 callback args
-- `options` &mdash; The `use{...}Callback` hook options:
 
-<table>
-<tr>
-    <td><code>cancelable:&nbsp;bool</code></td>
-    <td>Whether the request should be canceled on component unmount</td>
-</tr>
-</table>
+- result array structure is `[exec, loading, { error, retry, response, data, execCount, input }]`:
 
-- result array structure is `[callback, loading, error, otherData]`:
+-------------------
 
-<table>
-<tr>
-    <td><code>exec:&nbsp;Function</code></td>
-    <td>Callback function to execute the request</td>
-</tr>
-<tr>
-    <td><code>loading:&nbsp;bool</code></td>
-    <td>Loading indicator</td>
-</tr>
-<tr>
-    <td><code>error:&nbsp;Error|null</code></td>
-    <td>Error, if any</td>
-</tr>
-<tr>
-    <td><code>otherData:&nbsp;Object</code></td>
-    <td><code>{ retry, response, data, execCount, input }</code></td>
-</tr>
-</table>
+#### `useParallel{Method}Callback(axiosConfigFactory): []`
+
+Where {Method} is one of the following: `Post, Put, Patch, Delete, Get` 
+
+* `axiosConfigFactory` &mdash; A function producing an axios config object from 
+callback args
+
+- result array structure is `[exec, loading, { retry, errors, responses, data, succeed, failed, execCount, input }]`
 
 -------------------
 
 ## Support 👩‍
 
 * Please feel free to create issues with questions
-* It's meant to grow and evolve to cover nicely more data transfer use cases &mdash; you can open an issues to describe your unique use case
-* PRs are welcomed
 
-## Tahnk you!

@@ -1,0 +1,5 @@
+{
+  "transform": {
+    "^.+\\.js$": "<rootDir>/jest.transform.js"
+  }
+}

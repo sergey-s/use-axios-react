@@ -1,11 +1,12 @@
 {
   "name": "use-axios-react",
-  "version": "0.1.10",
+  "version": "0.2.1",
   "description": "Axios in React in the hooks era",
   "source": "src/index.js",
   "main": "lib/index.js",
   "module": "lib/index.module.js",
   "scripts": {
+    "test": "jest --config jest.config.json --no-cache",
     "build": "microbundle",
     "eslint": "eslint . --ext .js --ignore-path .gitignore",
     "eslint:fix": "eslint . --ext .js --ignore-path .gitignore --fix",
@@ -24,16 +25,25 @@
     "axios": "^0.18.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "@testing-library/react-hooks": "^2.0.1",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
     "eslint": "^6.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "jest": "^24.9.0",
     "microbundle": "^0.11.0",
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "react-hooks-testing-library": "^0.6.0",
+    "react-test-renderer": "^16.9.0"
   },
   "keywords": [
     "react",
@@ -43,6 +53,8 @@
     "useAxios",
     "react hook",
     "react hooks",
+    "react async",
+    "react-async",
     "react-hook",
     "axios hook",
     "axios hooks",

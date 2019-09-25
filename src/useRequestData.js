@@ -4,8 +4,13 @@ import { axiosInstance } from './axiosInstance';
 
 const useRequestData = (axiosConfig, execConfig = {}) => {
 
-  const [retriesCount, setRetriesCount] = useState(0);
-  const retry = () => setRetriesCount(retriesCount + 1);
+  const [state, setState] = useState({
+    loading: Boolean(execConfig.willRun),
+    retriesCount: 0,
+    error: null,
+    response: null,
+    data: undefined, // Undefined to allow a default value when destructuring hook return value
+  });
 
   // ------------------------
 
@@ -21,15 +26,9 @@ const useRequestData = (axiosConfig, execConfig = {}) => {
     depends = [willRun, url, method, JSON.stringify(params), JSON.stringify(data)];
   }
 
-  depends.push(retriesCount);
+  depends.push(state.retriesCount);
 
   // ------------------------
-
-  // Undefined allows to initialize a destructed variable with some initial value for data
-  const [data, setData] = useState(undefined);
-  const [loading, setLoading] = useState(willRun);
-  const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null);
 
   useEffect(
     () => {
@@ -40,8 +39,7 @@ const useRequestData = (axiosConfig, execConfig = {}) => {
       let cancelToken;
 
       async function doRequest() {
-        setLoading(true);
-        setError(null);
+        setState({ ...state, loading: true, error: null });
 
         const requestConfig = { ...axiosConfig };
         if (cancelable) {
@@ -51,13 +49,10 @@ const useRequestData = (axiosConfig, execConfig = {}) => {
 
         try {
           const response = await axiosInstance(requestConfig);
-          setResponse(response);
-          setData(response.data);
-          setLoading(false);
-        } catch (e) {
-          if (!isCancel(e)) {
-            setError(e);
-            setLoading(false);
+          setState({ ...state, loading: false, response, data: response.data });
+        } catch (error) {
+          if (!isCancel(error)) {
+            setState({ ...state, loading: false, error });
           }
         }
       }
@@ -71,7 +66,11 @@ const useRequestData = (axiosConfig, execConfig = {}) => {
     depends
   );
 
-  return [data, loading, error, { response, retry, retriesCount, setData }];
+  const retry = () => setState({ ...state, error: null, loading: true, retriesCount: state.retriesCount + 1 });
+  const setData = (data) => setState({ ...state, data });
+  const { data, loading, error, response, retriesCount } = state;
+
+  return [data, loading, { error, response, retry, retriesCount, setData }];
 };
 
 function normalizedConfig(config) {
