@@ -1,6 +1,6 @@
 {
   "name": "use-axios-react",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Axios in React in the hooks era",
   "source": "src/index.js",
   "main": "lib/index.js",

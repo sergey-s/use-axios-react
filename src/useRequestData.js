@@ -4,6 +4,10 @@ import { axiosInstance } from './axiosInstance';
 
 const useRequestData = (axiosConfig, execConfig = {}) => {
 
+  if (typeof execConfig.willRun === 'undefined') {
+    execConfig.willRun = true;
+  }
+
   const [state, setState] = useState({
     loading: Boolean(execConfig.willRun),
     retriesCount: 0,
