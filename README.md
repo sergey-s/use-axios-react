@@ -37,8 +37,8 @@ And make sure you use React v16.8.0 or newer.
 [![Edit Fetch example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/fetch-with-reload-retry-hlmb2?fontsize=14)
 
 ```js
-import React from 'react';
-import { useGetData } from 'use-axios-react';
+import React from "react";
+import { useGetData } from "use-axios-react";
 
 const KanyeQuote = () => {
   const [data, loading] = useGetData("https://api.kanye.rest/");
@@ -58,7 +58,7 @@ import React from "react";
 import { useGetData } from "use-axios-react";
 
 const KanyeQuote = () => {
-  const [data, loading, error, { retry }] = useGetData("https://api.kanye.rest/", { cancelable: true });
+  const [data, loading, { error, retry }] = useGetData("https://api.kanye.rest/", { cancelable: true });
 
   if (loading) return <Spinner />;
   if (error) return <Button onClick={retry} label="RETRY" />;
@@ -88,7 +88,7 @@ function userToRequest({ name, job }) {
 }
 
 const CreateUser = () => {
-  const [create, sending, error, { data }] = usePostCallback(userToRequest);
+  const [create, sending, { error, data }] = usePostCallback(userToRequest);
 
   const neo = { name: "Neo", job: "The One" };
   const morpheus = { name: "Morpheus", job: "Leader" };
@@ -110,7 +110,6 @@ const CreateUser = () => {
 
 ```js
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 import { useGetData } from "use-axios-react";
 
 const PaginatedKanyeQuotes = () => {
@@ -157,7 +156,7 @@ import {
 
 provideAxiosInstance(
   axios.create({
-    baseURL: "https://todo-backend-node-koa.herokuapp.com"
+    baseURL: "https://todo-backend-golang-goa.herokuapp.com"
   })
 );
 
@@ -170,13 +169,18 @@ const todoObjectToAxiosRequest = ({ id, title, order, completed }) => ({
 });
 
 const TodoMvcApp = () => {
-  const [create, creating, createError] = usePostCallback(todoObjectToAxiosRequest);
-  const [remove, removing, removeError] = useDeleteCallback(todoObjectToAxiosRequest);
-  const [update, updating, updateError] = usePatchCallback(todoObjectToAxiosRequest);
+  // Reusing the same mapping function for all CRUD requests
+  const [create, creating, { error: createError }] = usePostCallback(todoObjectToAxiosRequest);
+  const [remove, removing, { error: removeError }] = useDeleteCallback(todoObjectToAxiosRequest);
+  const [update, updating, { error: updateError }] = usePatchCallback(todoObjectToAxiosRequest);
 
-  const [todos = [], fetching, fetchError] = useGetData("/todos", {
+  // Re-fetch after any of actions is completed
+  const allRequestsDone = !creating && !removing && !updating;
+  const [todos = [], fetching, { error: fetchError }] = useGetData("/todos", {
+    // The hook will re-run every time `depends` changes
     depends: [creating, removing, updating],
-    willRun: !creating && !removing && !updating
+    // Actual request will be performed only if this is true
+    willRun: allRequestsDone
   });
 
   if (createError || removeError || updateError || fetchError) {
@@ -207,14 +211,10 @@ import { useGetData, usePostCallback } from "use-axios-react";
 const CreateUser = () => {
   
   // Do an initial load
-  const [users = [], loading, loadError, { setData: setUsers }] = useGetData(
-    "https://reqres.in/api/users"
-  );
+  const [users = [], loading, { error: loadError, setData: setUsers }] = useGetData("https://reqres.in/api/users");
 
   // We're particularly interested in the create() callback and the response data (new user data)
-  const [create, creating, createError, { data: newUser }] = usePostCallback(
-    "https://reqres.in/api/users"
-  );
+  const [create, creating, { error: createError, data: newUser }] = usePostCallback("https://reqres.in/api/users");
 
   // Update users state evey time the newUser changes
   useEffect(
