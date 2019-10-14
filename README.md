@@ -238,6 +238,42 @@ const CreateUser = () => {
 ```
 </details>
 
+<details>
+<summary><b>Using custom axios instance</b></summary>
+
+[![Edit Using custom axios instance](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/using-custom-axios-instance-vq8bq?fontsize=14)
+
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+import axios from "axios";
+import { provideAxiosInstance, useGetData } from "use-axios-react";
+
+const customAxiosInstance = axios.create({
+  baseURL: "https://reqres.in/api",
+  transformResponse: axios.defaults.transformResponse.concat(data => {
+    return data.data;
+  })
+});
+
+provideAxiosInstance(customAxiosInstance);
+
+function App() {
+  const [users, loading] = useGetData("/users");
+
+  if (loading) return "Loading...";
+
+  return (
+    <div>
+      <h1>Users:</h1>
+      <code>{JSON.stringify(users)}</code>
+    </div>
+  );
+}
+```
+</details>
+
 ### Example apps
 
 - [Full featured TodoMVC app](https://github.com/sergey-s/todomvc-react-hooks-api-crud)
