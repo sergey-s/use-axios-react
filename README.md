@@ -1,5 +1,5 @@
-<div align="center">
-🚀 Axios in React in the hooks era
+<div>
+WARNING: not maintained, feel free to fork and use in any way
 </div>
 <p align="center">
 <div align="center">
@@ -380,10 +380,3 @@ Where {Method} is one of the following: `Post, Put, Patch, Delete, Get`
 callback args
 
 - result array structure is `[exec, loading, { retry, errors, responses, data, succeed, failed, execCount, input }]`
-
--------------------
-
-## Support 👩‍
-
-* Please feel free to create issues with questions
-
